@@ -151,9 +151,25 @@
   cursor: pointer;
   border: none;
   text-decoration: none;
+  overflow: hidden;
+  position: relative;
   &:hover {
     box-shadow: 0 0 0 1px rgba(246, 208, 138, 0.6), 0 0 40px rgba(224, 160, 64, 0.5), 0 10px 30px -5px rgba(224, 160, 64, 0.6);
     transform: translateY(-1px);
+  }
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+    transition: left 0.55s ease;
+    pointer-events: none;
+  }
+  &:hover::after {
+    left: 160%;
   }
 }
 
@@ -200,4 +216,26 @@
   filter: blur(24px);
   pointer-events: none;
   animation: flareGlow 4s ease-in-out infinite;
+}
+
+/* ── Ticker ── */
+@keyframes ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@utility ticker-track {
+  display: flex;
+  animation: ticker-scroll 35s linear infinite;
+  white-space: nowrap;
+}
+
+/* ── Featured pricing card pulse ── */
+@keyframes featured-glow {
+  0%, 100% { box-shadow: 0 0 60px -10px rgba(224,160,64,0.5); }
+  50%       { box-shadow: 0 0 90px -5px rgba(224,160,64,0.75), 0 0 130px -20px rgba(224,160,64,0.3); }
+}
+
+@utility featured-pulse {
+  animation: featured-glow 3.5s ease-in-out infinite;
 }

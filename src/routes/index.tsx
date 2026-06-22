@@ -22,6 +22,8 @@ export const Route = createFileRoute("/")({
 });
 
 const CHECKOUT = "#checkout";
+// TODO: substitua pelo número real — ex: https://wa.me/5511999999999
+const WHATSAPP = "https://wa.me/55";
 const EVENT_DATE = new Date("2026-08-01T09:00:00-03:00");
 
 /* ---------- Hooks ---------- */
@@ -59,14 +61,19 @@ function useCountdown(target: Date) {
   return { d, h, m, s };
 }
 
+function useNavVisible() {
+  const [visible, setVisible] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 80);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return visible;
+}
 
 /* ---------- Small components ---------- */
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return <span className="eyebrow">{children}</span>;
-}
-
-function GoldRule({ className = "" }: { className?: string }) {
-  return <div className={`gold-rule ${className}`} />;
 }
 
 function CTA({
@@ -128,16 +135,115 @@ function XIcon() {
   );
 }
 
-/* ---------- Page ---------- */
+function WhatsAppIcon({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={`fill-current shrink-0 ${className}`} aria-hidden>
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+    </svg>
+  );
+}
+
+/* ---------- Sticky nav (aparece após scroll) ---------- */
+function StickyNav({ visible }: { visible: boolean }) {
+  return (
+    <header
+      aria-hidden={!visible}
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
+      style={{
+        transform: visible ? "translateY(0)" : "translateY(-100%)",
+        opacity: visible ? 1 : 0,
+        background: "rgba(10,10,10,0.93)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        borderBottom: "1px solid rgba(224,160,64,0.18)",
+      }}
+    >
+      <div className="mx-auto max-w-6xl px-5 sm:px-8 py-3 flex items-center justify-between gap-4">
+        <img src="/logo-ruptura.png" alt="Imersão Ruptura" className="h-8 w-auto" />
+        <div className="flex items-center gap-5">
+          <span className="hidden sm:block text-[0.68rem] tracking-[0.2em] uppercase text-[color:var(--ash)]">
+            <span className="gold-text font-semibold">1 e 2 Ago · 2026</span>
+            <span className="mx-2 opacity-30">·</span>
+            <span>São Paulo</span>
+          </span>
+          <CTA className="py-2 px-5 text-[0.72rem] tracking-[0.12em]">
+            Garantir vaga →
+          </CTA>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+/* ---------- Botão flutuante WhatsApp ---------- */
+function WhatsAppFloat() {
+  return (
+    <a
+      href={WHATSAPP}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Tire suas dúvidas pelo WhatsApp"
+      className="fixed bottom-20 sm:bottom-8 right-4 sm:right-6 z-50 flex items-center gap-2 text-white text-[0.68rem] font-semibold tracking-[0.12em] uppercase px-4 py-3 transition-all duration-300 hover:-translate-y-1"
+      style={{
+        background: "linear-gradient(135deg, #25D366, #1aad54)",
+        borderRadius: "4px",
+        boxShadow: "0 6px 28px rgba(37,211,102,0.45)",
+      }}
+    >
+      <WhatsAppIcon />
+      <span>Dúvidas?</span>
+    </a>
+  );
+}
+
+/* ---------- Ticker de informações do evento ---------- */
+function EventTicker() {
+  const items = [
+    "São Paulo",
+    "1 e 2 de Agosto de 2026",
+    "Sábado e Domingo",
+    "Vagas Limitadas",
+    "Evento Presencial",
+  ];
+  const doubled = [...items, ...items, ...items, ...items];
+  return (
+    <div
+      className="overflow-hidden border-y border-[color:var(--gold)]/20 py-3"
+      style={{ background: "rgba(246,208,138,0.04)" }}
+      aria-hidden
+    >
+      <div className="ticker-track">
+        {doubled.map((item, i) => (
+          <span
+            key={i}
+            className="text-[0.65rem] tracking-[0.3em] uppercase"
+            style={{
+              color: i % 5 === 0 ? "#E0A040" : "rgba(235,218,190,0.5)",
+              marginRight: "2.5rem",
+            }}
+          >
+            {item}
+            <span className="ml-2.5 opacity-25">◆</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ---------- Página principal ---------- */
 function Index() {
   useReveal();
   const { d, h, m, s } = useCountdown(EVENT_DATE);
+  const navVisible = useNavVisible();
 
   return (
     <div className="relative min-h-screen bg-[color:var(--ink)] text-[color:var(--bone)] overflow-x-hidden">
-      {/* HERO */}
+      <StickyNav visible={navVisible} />
+      <WhatsAppFloat />
+
+      {/* ── HERO ── */}
       <section className="relative min-h-[100svh] flex items-center pt-16 pb-24 sm:pt-24">
-        {/* Background photo */}
         <div className="absolute inset-0 z-0">
           <img
             src="/rapha.jpg"
@@ -146,8 +252,6 @@ function Index() {
             loading="eager"
             className="absolute inset-0 h-full w-full object-cover object-[60%_30%] opacity-70 lg:opacity-90 lg:object-[75%_30%]"
           />
-
-          {/* Vignette / fuse to black */}
           <div
             className="absolute inset-0"
             style={{
@@ -173,18 +277,24 @@ function Index() {
 
         <div className="relative z-10 mx-auto w-full max-w-7xl px-5 sm:px-8">
           <div className="max-w-2xl">
-            <p className="reveal eyebrow">
-              Para a mulher de fé que já tentou de tudo
-            </p>
+            {/* Badge de evento presencial */}
+            <div
+              className="reveal inline-flex items-center gap-2.5 border border-[color:var(--gold)]/35 px-4 py-2 mb-8"
+              style={{ background: "rgba(224,160,64,0.07)" }}
+            >
+              <span
+                className="block h-1.5 w-1.5 rounded-full"
+                style={{ background: "#E0A040", boxShadow: "0 0 7px #E0A040" }}
+              />
+              <span className="text-[0.65rem] tracking-[0.3em] uppercase font-semibold text-[color:var(--gold-light)]">
+                Evento Presencial · São Paulo
+              </span>
+            </div>
 
-            <div className="reveal mt-8 sm:mt-10">
+            <div className="reveal">
               <p
                 className="text-[color:var(--bone)]/80 font-[var(--font-label)]"
-                style={{
-                  letterSpacing: "0.4em",
-                  fontSize: "0.75rem",
-                  fontWeight: 500,
-                }}
+                style={{ letterSpacing: "0.4em", fontSize: "0.75rem", fontWeight: 500 }}
               >
                 IMERSÃO
               </p>
@@ -225,13 +335,11 @@ function Index() {
             </p>
 
             <div className="reveal mt-8 inline-flex flex-wrap items-center gap-x-3 gap-y-1 border border-[color:var(--gold)]/40 px-4 py-3 text-[0.72rem] tracking-[0.18em] uppercase">
-              <span className="gold-text font-semibold">
-                1 e 2 de Agosto de 2026
-              </span>
+              <span className="gold-text font-semibold">1 e 2 de Agosto de 2026</span>
               <span className="text-[color:var(--ash)]">·</span>
               <span className="text-[color:var(--bone)]/80">Sáb e Dom</span>
               <span className="text-[color:var(--ash)]">·</span>
-              <span className="text-[color:var(--bone)]/80">[Cidade/Local]</span>
+              <span className="text-[color:var(--bone)]/80">São Paulo</span>
               <span className="text-[color:var(--ash)]">·</span>
               <span className="gold-text font-semibold">Vagas Limitadas</span>
             </div>
@@ -246,39 +354,74 @@ function Index() {
         </div>
       </section>
 
-      {/* COUNTDOWN */}
-      <section className="relative border-y border-[color:var(--gold)]/20 py-12 sm:py-16">
+      {/* ── TICKER ── */}
+      <EventTicker />
+
+      {/* ── COUNTDOWN ── */}
+      <section className="relative py-14 sm:py-20">
         <div className="mx-auto max-w-5xl px-5 sm:px-8 text-center">
-          <p className="eyebrow">A decisão tem prazo</p>
-          <div className="mt-6 grid grid-cols-4 gap-2 sm:gap-8">
+          <p className="eyebrow mb-10">A decisão tem prazo</p>
+
+          <div className="inline-flex flex-wrap items-stretch justify-center gap-1.5 sm:gap-0">
             {[
               { v: d, l: "Dias" },
               { v: h, l: "Horas" },
               { v: m, l: "Min" },
               { v: s, l: "Seg" },
-            ].map((x) => (
-              <div key={x.l} className="flex flex-col items-center">
-                <span
-                  className="gold-text tabular-nums"
+            ].map((x, i) => (
+              <div key={x.l} className="flex items-stretch">
+                <div
+                  className="flex flex-col items-center justify-center w-[74px] sm:w-[112px] py-5 sm:py-8"
                   style={{
-                    fontFamily: "var(--font-display)",
-                    fontWeight: 700,
-                    fontSize: "clamp(2.25rem, 8vw, 4.5rem)",
-                    lineHeight: 1,
+                    background: "rgba(246,208,138,0.05)",
+                    border: "1px solid rgba(224,160,64,0.22)",
                   }}
                 >
-                  {String(x.v).padStart(2, "0")}
-                </span>
-                <span className="mt-2 text-[0.65rem] sm:text-xs uppercase tracking-[0.25em] text-[color:var(--ash)]">
-                  {x.l}
-                </span>
+                  <span
+                    className="gold-text tabular-nums"
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontWeight: 700,
+                      fontSize: "clamp(2.5rem, 8vw, 4.8rem)",
+                      lineHeight: 1,
+                    }}
+                  >
+                    {String(x.v).padStart(2, "0")}
+                  </span>
+                  <span className="mt-2 text-[0.6rem] sm:text-[0.65rem] uppercase tracking-[0.25em] text-[color:var(--ash)]">
+                    {x.l}
+                  </span>
+                </div>
+                {i < 3 && (
+                  <div className="hidden sm:flex items-center justify-center w-8">
+                    <span
+                      className="gold-text"
+                      style={{
+                        fontFamily: "var(--font-display)",
+                        fontWeight: 700,
+                        fontSize: "3rem",
+                        lineHeight: 1,
+                        opacity: 0.45,
+                      }}
+                    >
+                      :
+                    </span>
+                  </div>
+                )}
               </div>
             ))}
+          </div>
+
+          <p className="mt-8 text-[0.78rem] text-[color:var(--ash)] tracking-[0.18em] uppercase">
+            1 de agosto de 2026 · São Paulo
+          </p>
+          <div className="mt-8">
+            <CTA>Garantir minha vaga agora →</CTA>
           </div>
         </div>
       </section>
 
-      {/* A DOR */}
+      {/* ── A DOR ── */}
       <Section eyebrow="O cansaço" title="Existe um momento em que a mulher se cansa.">
         <p>
           Cansa de trabalhar muito e o dinheiro nunca sobrar. Cansa de fazer
@@ -304,7 +447,7 @@ function Index() {
         </p>
       </Section>
 
-      {/* A CAUSA */}
+      {/* ── A CAUSA ── */}
       <Section
         eyebrow="O que ninguém te mostrou"
         title="A sua maior prisão não está no que você vê."
@@ -339,12 +482,12 @@ function Index() {
               fontStyle: "italic",
             }}
           >
-            “E ninguém quebra uma corrente que não consegue enxergar.”
+            "E ninguém quebra uma corrente que não consegue enxergar."
           </p>
         </div>
       </Section>
 
-      {/* O MECANISMO */}
+      {/* ── O MECANISMO ── */}
       <section className="relative py-20 sm:py-28">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
           <div className="reveal text-center max-w-2xl mx-auto mb-14">
@@ -367,7 +510,7 @@ function Index() {
             ].map((c, i) => (
               <article
                 key={c.t}
-                className="reveal relative bg-[color:var(--ink-warm)]/60 border border-[color:var(--gold)]/30 p-7 sm:p-8"
+                className="reveal relative bg-[color:var(--ink-warm)]/60 border border-[color:var(--gold)]/30 p-7 sm:p-8 transition-all duration-300 hover:border-[color:var(--gold)]/60 hover:bg-[color:var(--ink-warm)]/90"
               >
                 <span
                   className="absolute top-5 right-6 text-xs font-mono tracking-widest gold-text"
@@ -377,31 +520,23 @@ function Index() {
                 </span>
                 <h3
                   className="gold-text"
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontWeight: 700,
-                    fontSize: "1.5rem",
-                  }}
+                  style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "1.5rem" }}
                 >
                   {c.t}
                 </h3>
                 <hr className="gold-rule my-4" />
-                <p className="text-[color:var(--bone)]/85 text-[0.95rem]">
-                  {c.d}
-                </p>
+                <p className="text-[color:var(--bone)]/85 text-[0.95rem]">{c.d}</p>
               </article>
             ))}
           </div>
 
           <div className="reveal mt-14 max-w-3xl mx-auto">
-            <Verse>
-              “O jugo será despedaçado por causa da unção.” — Isaías 10:27
-            </Verse>
+            <Verse>"O jugo será despedaçado por causa da unção." — Isaías 10:27</Verse>
           </div>
         </div>
       </section>
 
-      {/* O DEPOIS */}
+      {/* ── O DEPOIS ── */}
       <Section
         eyebrow="O que começa depois da ruptura"
         title="Existe um tipo de vida que só começa depois que você rompe."
@@ -423,13 +558,12 @@ function Index() {
         </p>
         <div className="reveal mt-10">
           <Verse>
-            “Se o Filho vos libertar, verdadeiramente sereis livres.” — João
-            8:36
+            "Se o Filho vos libertar, verdadeiramente sereis livres." — João 8:36
           </Verse>
         </div>
       </Section>
 
-      {/* JORNADA — 2 DIAS */}
+      {/* ── JORNADA — 2 DIAS ── */}
       <section className="relative py-20 sm:py-28 flare-bg">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
           <div className="reveal text-center mb-14">
@@ -441,18 +575,18 @@ function Index() {
                 day: "Dia 1",
                 title: "Revelação e Confronto",
                 body: "O dia em que o invisível se torna visível. Você vai enxergar os pactos que fez sem saber, mapear as correntes que se repetem e encontrar a raiz — não os sintomas.",
-                verse: "“Conhecereis a verdade, e a verdade vos libertará.” — João 8:32",
+                verse: ""Conhecereis a verdade, e a verdade vos libertará." — João 8:32",
               },
               {
                 day: "Dia 2",
                 title: "Quebra e Nova Identidade",
                 body: "O dia da ruptura. Você quebra o pacto na raiz e dá o primeiro passo para fora do ciclo — para nascer na identidade próspera que estava presa do outro lado da corrente.",
-                verse: "“Se alguém está em Cristo, nova criatura é.” — 2 Coríntios 5:17",
+                verse: ""Se alguém está em Cristo, nova criatura é." — 2 Coríntios 5:17",
               },
             ].map((d) => (
               <article
                 key={d.day}
-                className="reveal relative border border-[color:var(--gold)]/30 bg-[color:var(--ink-warm)]/60 p-8 sm:p-10"
+                className="reveal relative border border-[color:var(--gold)]/30 bg-[color:var(--ink-warm)]/60 p-8 sm:p-10 transition-all duration-300 hover:border-[color:var(--gold)]/55"
               >
                 <p className="eyebrow">{d.day}</p>
                 <h3
@@ -467,19 +601,18 @@ function Index() {
                 </h3>
                 <hr className="gold-rule my-5" />
                 <p className="text-[color:var(--bone)]/85">{d.body}</p>
-                <p className="mt-6 italic text-[color:var(--gold-light)] text-sm">
-                  {d.verse}
-                </p>
+                <p className="mt-6 italic text-[color:var(--gold-light)] text-sm">{d.verse}</p>
               </article>
             ))}
           </div>
         </div>
       </section>
 
-      {/* RAPHA TARSO */}
+      {/* ── RAPHA TARSO ── */}
       <section className="relative py-24 sm:py-32 border-t border-[color:var(--gold)]/15">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
           <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-16 items-center">
+            {/* Foto */}
             <div className="reveal relative order-2 lg:order-1">
               <div className="relative aspect-[4/5] w-full max-w-md mx-auto overflow-hidden">
                 <img
@@ -497,8 +630,17 @@ function Index() {
                 />
                 <div className="absolute inset-0 ring-1 ring-[color:var(--gold)]/30" />
               </div>
+              {/* Linha dourada decorativa */}
+              <div
+                className="absolute -bottom-4 left-0 right-0 mx-auto max-w-md h-px"
+                style={{
+                  background:
+                    "linear-gradient(90deg, transparent, rgba(224,160,64,0.55), transparent)",
+                }}
+              />
             </div>
 
+            {/* Bio */}
             <div className="reveal order-1 lg:order-2">
               <div className="flex items-center gap-3 mb-6">
                 <img
@@ -508,8 +650,6 @@ function Index() {
                   className="h-12 w-auto opacity-95"
                 />
               </div>
-
-
 
               <Eyebrow>Quem conduz a jornada</Eyebrow>
               <h2
@@ -526,8 +666,8 @@ function Index() {
               </h2>
               <hr className="gold-rule my-6" />
               <p className="text-[color:var(--bone)]/85">
-                Terapeuta, mentor e comunicador cristão. Há anos conduz pessoas
-                a romper os bloqueios que travam o desenvolvimento integral —
+                Terapeuta, mentor e comunicador cristão. Há anos conduz pessoas a
+                romper os bloqueios que travam o desenvolvimento integral —
                 espírito, alma e corpo — a partir de uma tese simples e
                 implacável:{" "}
                 <span className="gold-text font-semibold">
@@ -537,31 +677,11 @@ function Index() {
                 Quando há convergência, nasce o extraordinário.
               </p>
 
-
-              <ul className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                {[
-                  "+ de X pessoas impactadas",
-                  "X anos conduzindo transformações",
-                  "Mentor e comunicador cristão",
-                  "[marco / credencial]",
-
-                ].map((b) => (
-                  <li
-                    key={b}
-                    className="flex items-start gap-3 border border-[color:var(--gold)]/20 px-4 py-3"
-                  >
-                    <CheckIcon />
-                    <span className="text-[color:var(--bone)]/85">{b}</span>
-                  </li>
-                ))}
-              </ul>
-
               <div className="mt-10 border-l-2 border-[color:var(--gold)]/40 pl-5">
                 <p className="eyebrow">Valéria Tarso</p>
                 <p className="mt-2 text-[color:var(--bone)]/80 text-[0.95rem]">
-                  Conduz os atendimentos terapêuticos do ecossistema,
-                  sustentando o cuidado profundo que transforma revelação em
-                  ruptura real.
+                  Conduz os atendimentos terapêuticos do ecossistema, sustentando
+                  o cuidado profundo que transforma revelação em ruptura real.
                 </p>
               </div>
             </div>
@@ -569,7 +689,7 @@ function Index() {
         </div>
       </section>
 
-      {/* PARA QUEM É */}
+      {/* ── PARA QUEM É ── */}
       <section className="relative py-20 sm:py-28 border-t border-[color:var(--gold)]/15">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
           <div className="reveal text-center mb-14">
@@ -579,11 +699,7 @@ function Index() {
             <div className="reveal border border-[color:var(--gold)]/30 p-8 bg-[color:var(--ink-warm)]/50">
               <h3
                 className="gold-text mb-6"
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontWeight: 700,
-                  fontSize: "1.6rem",
-                }}
+                style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "1.6rem" }}
               >
                 É para você se…
               </h3>
@@ -606,11 +722,7 @@ function Index() {
             <div className="reveal border border-[color:var(--ash)]/20 p-8">
               <h3
                 className="text-[color:var(--ash)] mb-6"
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontWeight: 600,
-                  fontSize: "1.6rem",
-                }}
+                style={{ fontFamily: "var(--font-display)", fontWeight: 600, fontSize: "1.6rem" }}
               >
                 Não é para você se…
               </h3>
@@ -631,7 +743,7 @@ function Index() {
         </div>
       </section>
 
-      {/* O QUE VOCÊ RECEBE + INGRESSOS */}
+      {/* ── O QUE VOCÊ RECEBE + INGRESSOS ── */}
       <section
         id="checkout"
         className="relative py-24 sm:py-32 border-t border-[color:var(--gold)]/15 flare-bg scroll-mt-10"
@@ -662,79 +774,118 @@ function Index() {
             ].map((t) => (
               <li
                 key={t}
-                className="flex gap-3 border border-[color:var(--gold)]/20 bg-[color:var(--ink-warm)]/40 px-5 py-4"
+                className="flex gap-3 border border-[color:var(--gold)]/20 bg-[color:var(--ink-warm)]/40 px-5 py-4 transition-colors hover:border-[color:var(--gold)]/40"
               >
                 <CheckIcon />
-                <span className="text-[color:var(--bone)]/90 text-[0.95rem]">
-                  {t}
-                </span>
+                <span className="text-[color:var(--bone)]/90 text-[0.95rem]">{t}</span>
               </li>
             ))}
           </ul>
 
-          {/* Pricing cards */}
+          {/* Indicador de lote */}
+          <div className="reveal text-center mb-10">
+            <div
+              className="inline-flex items-center gap-3 border border-[color:var(--gold)]/40 px-6 py-3"
+              style={{ background: "rgba(224,160,64,0.07)" }}
+            >
+              <span
+                className="block h-2 w-2 rounded-full"
+                style={{ background: "#E0A040", boxShadow: "0 0 8px #E0A040" }}
+              />
+              <p className="text-[0.7rem] tracking-[0.22em] uppercase font-semibold text-[color:var(--gold-light)]">
+                Lote 1 — Preço especial · Vagas limitadas
+              </p>
+            </div>
+          </div>
+
+          {/* Cards de ingresso */}
           <div className="grid gap-6 md:grid-cols-3">
-            {[
-              {
-                name: "Individual",
-                desc: "Sua vaga na imersão de 2 dias.",
-                price: "R$ 797",
-                cta: "Garantir minha vaga",
-                featured: false,
-              },
-              {
-                name: "Dupla",
-                desc: "Sua vaga + 1 convidada.",
-                price: "R$ 997",
-                cta: "Garantir minha vaga",
-                featured: true,
-                badge: "Mais escolhido",
-              },
-              {
-                name: "VIP",
-                desc: "Vaga + assento à frente + [bônus VIP].",
-                price: "R$ [valor]",
-                cta: "Quero o VIP",
-                featured: false,
-              },
-            ].map((p) => (
+            {(
+              [
+                {
+                  name: "Individual",
+                  desc: "Sua vaga na imersão de 2 dias.",
+                  original: "R$ 1.597",
+                  price: "R$ 797",
+                  installment: "ou em até 12x",
+                  cta: "Garantir minha vaga",
+                  featured: false,
+                },
+                {
+                  name: "Dupla",
+                  desc: "Sua vaga + 1 convidada.",
+                  original: "R$ 1.997",
+                  price: "R$ 997",
+                  installment: "ou em até 12x",
+                  cta: "Garantir minha vaga",
+                  featured: true,
+                  badge: "Mais escolhido",
+                },
+                {
+                  name: "VIP",
+                  desc: "Vaga + assento à frente + [bônus VIP].",
+                  original: "R$ 2.597",
+                  price: "R$ 1.297",
+                  installment: "ou em até 12x",
+                  cta: "Quero o VIP",
+                  featured: false,
+                },
+              ] as Array<{
+                name: string;
+                desc: string;
+                original: string;
+                price: string;
+                installment: string;
+                cta: string;
+                featured: boolean;
+                badge?: string;
+              }>
+            ).map((p) => (
               <article
                 key={p.name}
-                className={`reveal relative bg-[color:var(--ink-warm)]/70 p-8 flex flex-col ${
+                className={`reveal relative bg-[color:var(--ink-warm)]/70 p-8 flex flex-col transition-all duration-300 ${
                   p.featured
-                    ? "border-2 border-[color:var(--gold)] shadow-[0_0_60px_-10px_rgba(224,160,64,0.5)]"
-                    : "border border-[color:var(--gold)]/25"
+                    ? "border-2 border-[color:var(--gold)] featured-pulse"
+                    : "border border-[color:var(--gold)]/25 hover:border-[color:var(--gold)]/50"
                 }`}
               >
                 {p.featured && p.badge && (
                   <span
-                    className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 text-[0.65rem] tracking-[0.25em] uppercase font-semibold"
+                    className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-5 py-1.5 text-[0.65rem] tracking-[0.25em] uppercase font-bold whitespace-nowrap"
                     style={{
-                      background:
-                        "linear-gradient(135deg, #F6D08A, #E0A040)",
+                      background: "linear-gradient(135deg, #F6D08A, #E0A040)",
                       color: "#0A0A0A",
                     }}
                   >
                     {p.badge}
                   </span>
                 )}
+
                 <p className="eyebrow">{p.name}</p>
-                <p className="mt-3 text-[color:var(--bone)]/80 text-sm min-h-[3rem]">
-                  {p.desc}
-                </p>
-                <hr className="gold-rule my-6" />
-                <p
-                  className="gold-text"
-                  style={{
-                    fontFamily: "var(--font-display)",
-                    fontWeight: 700,
-                    fontSize: "2.6rem",
-                    lineHeight: 1,
-                  }}
-                >
-                  {p.price}
-                </p>
-                <div className="mt-8">
+                <p className="mt-3 text-[color:var(--bone)]/80 text-sm min-h-[3rem]">{p.desc}</p>
+                <hr className="gold-rule my-5" />
+
+                <div>
+                  <p className="text-[color:var(--ash)]/70 text-sm line-through mb-1 tracking-wide">
+                    {p.original}
+                  </p>
+                  <p
+                    className="gold-text"
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontWeight: 700,
+                      fontSize: "2.6rem",
+                      lineHeight: 1,
+                    }}
+                  >
+                    {p.price}
+                  </p>
+                  <p className="mt-2 text-[0.7rem] text-[color:var(--ash)] tracking-[0.1em]">
+                    {p.installment}
+                  </p>
+                </div>
+
+                <div className="mt-auto pt-8">
                   <CTA className="w-full">{p.cta}</CTA>
                 </div>
               </article>
@@ -752,22 +903,34 @@ function Index() {
               }}
             >
               A pergunta não é{" "}
-              <span className="gold-text">
-                “vale a pena gastar isso agora?”.
-              </span>{" "}
-              É: quanto já te custou continuar presa nos mesmos ciclos? Dois
-              dias podem encerrar o que vinha cobrando o seu preço há décadas
-              — em dinheiro, em paz e em tempo de vida.
+              <span className="gold-text">"vale a pena gastar isso agora?".</span>{" "}
+              É: quanto já te custou continuar presa nos mesmos ciclos? Dois dias
+              podem encerrar o que vinha cobrando o seu preço há décadas — em
+              dinheiro, em paz e em tempo de vida.
             </p>
           </div>
         </div>
       </section>
 
-      {/* GARANTIA */}
+      {/* ── GARANTIA ── */}
       <section className="relative py-20 sm:py-28">
         <div className="mx-auto max-w-3xl px-5 sm:px-8">
-          <div className="reveal relative border border-[color:var(--gold)]/40 p-10 sm:p-14 text-center bg-[color:var(--ink-warm)]/40">
-            <div className="mx-auto mb-6 grid h-16 w-16 place-items-center rounded-full border border-[color:var(--gold)] shadow-[0_0_30px_rgba(224,160,64,0.4)]">
+          <div
+            className="reveal relative border border-[color:var(--gold)]/40 p-10 sm:p-14 text-center bg-[color:var(--ink-warm)]/40"
+          >
+            {/* Cantos dourados decorativos */}
+            <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-[color:var(--gold)]/60" />
+            <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-[color:var(--gold)]/60" />
+            <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-[color:var(--gold)]/60" />
+            <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-[color:var(--gold)]/60" />
+
+            <div
+              className="mx-auto mb-6 grid h-16 w-16 place-items-center rounded-full border border-[color:var(--gold)]"
+              style={{
+                boxShadow:
+                  "0 0 30px rgba(224,160,64,0.4), inset 0 0 20px rgba(224,160,64,0.05)",
+              }}
+            >
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -797,14 +960,14 @@ function Index() {
             <p className="mt-5 text-[color:var(--bone)]/85">
               Compareça aos dois dias, viva o processo de ponta a ponta, e se
               ainda assim sentir que não recebeu o que prometemos, fale com a
-              nossa equipe em até [X dias]. A única coisa que pedimos é que
-              você apareça inteira. A ruptura faz a parte dela.
+              nossa equipe em até [X dias]. A única coisa que pedimos é que você
+              apareça inteira. A ruptura faz a parte dela.
             </p>
           </div>
         </div>
       </section>
 
-      {/* CHAMADO À DECISÃO */}
+      {/* ── CHAMADO À DECISÃO ── */}
       <section className="relative py-24 sm:py-36 overflow-hidden">
         <div
           className="absolute inset-0 pointer-events-none"
@@ -832,28 +995,26 @@ function Index() {
               identidade — próspera, livre, em paz — comece a nascer.
             </p>
             <p>
-              Em Atos 16, Paulo e Silas estavam acorrentados. E foi ali, no
-              lugar mais improvável, que veio o abalo — e as correntes de
-              todos se soltaram, e as portas se abriram.
+              Em Atos 16, Paulo e Silas estavam acorrentados. E foi ali, no lugar
+              mais improvável, que veio o abalo — e as correntes de todos se
+              soltaram, e as portas se abriram.
             </p>
             <p className="gold-text font-semibold">
-              A sua corrente também tem hora para se romper. E talvez a hora
-              seja agora.
+              A sua corrente também tem hora para se romper. E talvez a hora seja
+              agora.
             </p>
           </div>
           <div className="reveal mt-10 max-w-xl mx-auto">
             <Verse>
-              “Transformai-vos pela renovação da vossa mente.” — Romanos 12:2
+              "Transformai-vos pela renovação da vossa mente." — Romanos 12:2
             </Verse>
           </div>
           <div className="reveal mt-10 inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 border border-[color:var(--gold)]/40 px-4 py-3 text-[0.7rem] tracking-[0.2em] uppercase">
-            <span className="gold-text font-semibold">
-              1 e 2 de Agosto de 2026
-            </span>
+            <span className="gold-text font-semibold">1 e 2 de Agosto de 2026</span>
             <span className="text-[color:var(--ash)]">·</span>
             <span>Sáb e Dom</span>
             <span className="text-[color:var(--ash)]">·</span>
-            <span>[Cidade/Local]</span>
+            <span>São Paulo</span>
           </div>
           <div className="reveal mt-8">
             <CTA className="text-base px-8 py-5">Eu decido romper →</CTA>
@@ -861,7 +1022,7 @@ function Index() {
         </div>
       </section>
 
-      {/* FAQ */}
+      {/* ── FAQ ── */}
       <section className="relative py-20 sm:py-28 border-t border-[color:var(--gold)]/15">
         <div className="mx-auto max-w-3xl px-5 sm:px-8">
           <div className="reveal text-center mb-14">
@@ -885,7 +1046,7 @@ function Index() {
               },
               {
                 q: "Acho que já passou da minha hora / é tarde demais.",
-                a: "Uma das correntes mais comuns e mais mentirosas. Não existe prazo de validade para uma ruptura. O que parece “tarde demais” costuma ser o medo disfarçado de lógica.",
+                a: "Uma das correntes mais comuns e mais mentirosas. Não existe prazo de validade para uma ruptura. O que parece "tarde demais" costuma ser o medo disfarçado de lógica.",
               },
               {
                 q: "Preciso ser cristã para participar?",
@@ -897,7 +1058,7 @@ function Index() {
               },
               {
                 q: "O investimento cabe no meu momento?",
-                a: "Há [parcelamento]. Mas a conta verdadeira é outra: continuar no mesmo ciclo também tem um preço — e ele vem sendo descontado de você há anos.",
+                a: "Há parcelamento. Mas a conta verdadeira é outra: continuar no mesmo ciclo também tem um preço — e ele vem sendo descontado de você há anos.",
               },
               {
                 q: "Logística: horários, o que levar, alimentação, estacionamento.",
@@ -910,7 +1071,7 @@ function Index() {
         </div>
       </section>
 
-      {/* FOOTER */}
+      {/* ── FOOTER ── */}
       <footer className="relative border-t border-[color:var(--gold)]/25 py-16 pb-28 sm:pb-16">
         <div className="mx-auto max-w-5xl px-5 sm:px-8 text-center">
           <div className="flex flex-col items-center justify-center gap-4 mb-6">
@@ -923,29 +1084,39 @@ function Index() {
           </div>
 
           <p className="text-[0.72rem] tracking-[0.22em] uppercase text-[color:var(--ash)]">
-            1 e 2 de Agosto de 2026 · [Cidade/Local]
+            1 e 2 de Agosto de 2026 · São Paulo
           </p>
-          <div className="mt-8">
+
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <CTA>Quero viver a Imersão Ruptura →</CTA>
+            <a
+              href={WHATSAPP}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 border border-[#25D366]/40 text-[#25D366] text-[0.72rem] tracking-[0.15em] uppercase font-semibold px-6 py-4 transition-all duration-300 hover:border-[#25D366]/70 hover:bg-[#25D366]/5"
+            >
+              <WhatsAppIcon />
+              Fale pelo WhatsApp
+            </a>
           </div>
+
           <hr className="gold-rule my-10" />
           <p
             className="mx-auto max-w-2xl text-[color:var(--bone)]/75 italic"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            “A ruptura começa quando você quebra os pactos inconscientes que
-            fez com aquilo que um dia te feriu.”
+            "A ruptura começa quando você quebra os pactos inconscientes que fez
+            com aquilo que um dia te feriu."
           </p>
           <p className="mt-8 text-xs text-[color:var(--ash)]">
             © 2026 Rapha Tarso · Todos os direitos reservados.
           </p>
-
         </div>
       </footer>
 
-      {/* MOBILE STICKY CTA */}
+      {/* ── MOBILE STICKY CTA ── */}
       <div
-        className="fixed bottom-0 left-0 right-0 z-50 sm:hidden p-3 backdrop-blur-md"
+        className="fixed bottom-0 left-0 right-0 z-40 sm:hidden p-3 backdrop-blur-md"
         style={{
           background:
             "linear-gradient(180deg, rgba(10,10,10,0.85), rgba(10,10,10,0.98))",
@@ -960,7 +1131,7 @@ function Index() {
   );
 }
 
-/* ---------- Reusable text Section ---------- */
+/* ---------- Seção de texto reutilizável ---------- */
 function Section({
   eyebrow,
   title,
@@ -1001,7 +1172,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   return (
-    <div className="reveal border border-[color:var(--gold)]/25 bg-[color:var(--ink-warm)]/40">
+    <div className="reveal border border-[color:var(--gold)]/25 bg-[color:var(--ink-warm)]/40 transition-colors hover:border-[color:var(--gold)]/40">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -1016,9 +1187,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
         </span>
         <svg
           viewBox="0 0 24 24"
-          className={`h-5 w-5 shrink-0 transition-transform duration-300 ${
-            open ? "rotate-180" : ""
-          }`}
+          className={`h-5 w-5 shrink-0 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
           fill="none"
           stroke="url(#fg)"
           strokeWidth="2.2"
@@ -1041,9 +1210,7 @@ function FaqItem({ q, a }: { q: string; a: string }) {
         }}
         className="overflow-hidden transition-[max-height] duration-500 ease-out"
       >
-        <div className="px-5 sm:px-6 pb-5 text-[color:var(--bone)]/80 text-[0.95rem]">
-          {a}
-        </div>
+        <div className="px-5 sm:px-6 pb-5 text-[color:var(--bone)]/80 text-[0.95rem]">{a}</div>
       </div>
     </div>
   );
