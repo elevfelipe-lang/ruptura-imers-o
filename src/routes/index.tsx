@@ -45,18 +45,20 @@ function useReveal() {
 }
 
 function useCountdown(target: Date) {
-  const [now, setNow] = useState(() => Date.now());
+  const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
+    setNow(Date.now());
     const id = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(id);
   }, []);
-  const diff = Math.max(0, target.getTime() - now);
+  const diff = now === null ? 0 : Math.max(0, target.getTime() - now);
   const d = Math.floor(diff / 86400000);
   const h = Math.floor((diff / 3600000) % 24);
   const m = Math.floor((diff / 60000) % 60);
   const s = Math.floor((diff / 1000) % 60);
   return { d, h, m, s };
 }
+
 
 /* ---------- Small components ---------- */
 function Eyebrow({ children }: { children: React.ReactNode }) {
@@ -138,12 +140,13 @@ function Index() {
         {/* Background photo */}
         <div className="absolute inset-0 z-0">
           <img
-            src="/4.jpg"
+            src="/rapha.jpg"
             alt=""
             aria-hidden
             loading="eager"
             className="absolute inset-0 h-full w-full object-cover object-[60%_30%] opacity-70 lg:opacity-90 lg:object-[75%_30%]"
           />
+
           {/* Vignette / fuse to black */}
           <div
             className="absolute inset-0"
@@ -480,7 +483,7 @@ function Index() {
             <div className="reveal relative order-2 lg:order-1">
               <div className="relative aspect-[4/5] w-full max-w-md mx-auto overflow-hidden">
                 <img
-                  src="/4.jpg"
+                  src="/rapha.jpg"
                   alt="Rapha Tarso"
                   loading="lazy"
                   className="h-full w-full object-cover"
@@ -499,15 +502,14 @@ function Index() {
             <div className="reveal order-1 lg:order-2">
               <div className="flex items-center gap-3 mb-6">
                 <img
-                  src="/ID-Visual-Principal.png"
-                  alt="Método VEX"
+                  src="/logo-ruptura.png"
+                  alt="Imersão Ruptura"
                   loading="lazy"
-                  className="h-10 w-auto opacity-90"
+                  className="h-12 w-auto opacity-95"
                 />
-                <span className="text-[0.7rem] tracking-[0.25em] uppercase text-[color:var(--ash)]">
-                  Método VEX
-                </span>
               </div>
+
+
 
               <Eyebrow>Quem conduz a jornada</Eyebrow>
               <h2
@@ -524,11 +526,10 @@ function Index() {
               </h2>
               <hr className="gold-rule my-6" />
               <p className="text-[color:var(--bone)]/85">
-                Terapeuta, mentor e comunicador cristão. Criador do Método VEX
-                (Vida Extraordinária) e do Clube Diamante. Há anos conduz
-                pessoas a romper os bloqueios que travam o desenvolvimento
-                integral — espírito, alma e corpo — a partir de uma tese
-                simples e implacável:{" "}
+                Terapeuta, mentor e comunicador cristão. Há anos conduz pessoas
+                a romper os bloqueios que travam o desenvolvimento integral —
+                espírito, alma e corpo — a partir de uma tese simples e
+                implacável:{" "}
                 <span className="gold-text font-semibold">
                   ninguém trava por falta de vontade. Trava por falta de
                   alinhamento interno.
@@ -536,12 +537,14 @@ function Index() {
                 Quando há convergência, nasce o extraordinário.
               </p>
 
+
               <ul className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                 {[
                   "+ de X pessoas impactadas",
                   "X anos conduzindo transformações",
-                  "Criador do Método VEX",
+                  "Mentor e comunicador cristão",
                   "[marco / credencial]",
+
                 ].map((b) => (
                   <li
                     key={b}
@@ -910,25 +913,15 @@ function Index() {
       {/* FOOTER */}
       <footer className="relative border-t border-[color:var(--gold)]/25 py-16 pb-28 sm:pb-16">
         <div className="mx-auto max-w-5xl px-5 sm:px-8 text-center">
-          <div className="flex items-center justify-center gap-3 mb-6">
+          <div className="flex flex-col items-center justify-center gap-4 mb-6">
             <img
-              src="/ID-Visual-Branco.png"
-              alt=""
-              className="h-8 w-auto opacity-80"
+              src="/logo-ruptura.png"
+              alt="Imersão Ruptura"
+              className="h-16 w-auto opacity-95"
               loading="lazy"
             />
-            <p
-              className="gold-text"
-              style={{
-                fontFamily: "var(--font-display)",
-                fontWeight: 700,
-                fontSize: "1.5rem",
-                letterSpacing: "0.04em",
-              }}
-            >
-              Imersão Ruptura
-            </p>
           </div>
+
           <p className="text-[0.72rem] tracking-[0.22em] uppercase text-[color:var(--ash)]">
             1 e 2 de Agosto de 2026 · [Cidade/Local]
           </p>
@@ -944,8 +937,9 @@ function Index() {
             fez com aquilo que um dia te feriu.”
           </p>
           <p className="mt-8 text-xs text-[color:var(--ash)]">
-            © 2026 Rapha Tarso · Método VEX · Todos os direitos reservados.
+            © 2026 Rapha Tarso · Todos os direitos reservados.
           </p>
+
         </div>
       </footer>
 
