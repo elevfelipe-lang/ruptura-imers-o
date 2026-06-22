@@ -47,17 +47,15 @@
 :root {
   --radius: 0.5rem;
 
-  /* Brand palette */
-  --ink: oklch(0.12 0.005 60);          /* #0A0A0A */
-  --ink-warm: oklch(0.15 0.012 70);     /* #141008 */
-  --ink-deep: oklch(0.08 0.003 60);     /* #050505 */
-  --bone: oklch(0.96 0.012 80);         /* #F5F2EC */
-  --ash: oklch(0.7 0.012 80);           /* #A8A29A */
-  --gold-light: oklch(0.88 0.08 80);    /* #F6D08A */
-  --gold: oklch(0.74 0.13 70);          /* #E0A040 */
-  --gold-deep: oklch(0.58 0.13 55);     /* #C07A22 */
+  --ink: oklch(0.12 0.005 60);
+  --ink-warm: oklch(0.15 0.012 70);
+  --ink-deep: oklch(0.08 0.003 60);
+  --bone: oklch(0.96 0.012 80);
+  --ash: oklch(0.7 0.012 80);
+  --gold-light: oklch(0.88 0.08 80);
+  --gold: oklch(0.74 0.13 70);
+  --gold-deep: oklch(0.58 0.13 55);
 
-  /* Mapped semantic tokens */
   --background: var(--ink);
   --foreground: var(--bone);
   --card: var(--ink-warm);
@@ -88,11 +86,9 @@
   * {
     border-color: var(--color-border);
   }
-
   html {
     scroll-behavior: smooth;
   }
-
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
@@ -102,7 +98,6 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
-
   h1, h2, h3, h4 {
     font-family: var(--font-display);
     line-height: 1.1;
@@ -114,12 +109,13 @@
   font-family: var(--font-label);
   font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   background: linear-gradient(90deg, #F6D08A, #E0A040);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  display: inline-block;
 }
 
 @utility gold-text {
@@ -133,6 +129,7 @@
   background: linear-gradient(90deg, transparent, rgba(224, 160, 64, 0.5), transparent);
   height: 1px;
   width: 100%;
+  border: none;
 }
 
 @utility btn-gold {
@@ -143,8 +140,8 @@
   padding: 1rem 1.75rem;
   font-family: var(--font-label);
   font-weight: 600;
-  font-size: 0.85rem;
-  letter-spacing: 0.15em;
+  font-size: 0.82rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   color: #0A0A0A;
   background: linear-gradient(135deg, #F6D08A 0%, #E0A040 60%, #C07A22 100%);
@@ -153,8 +150,7 @@
   transition: all 0.3s ease;
   cursor: pointer;
   border: none;
-}
-@utility btn-gold {
+  text-decoration: none;
   &:hover {
     box-shadow: 0 0 0 1px rgba(246, 208, 138, 0.6), 0 0 40px rgba(224, 160, 64, 0.5), 0 10px 30px -5px rgba(224, 160, 64, 0.6);
     transform: translateY(-1px);
@@ -164,13 +160,13 @@
 @utility flare-bg {
   background:
     radial-gradient(ellipse 80% 50% at 50% 50%, rgba(224, 160, 64, 0.18), transparent 70%),
-    radial-gradient(ellipse 60% 40% at 50% 60%, rgba(246, 208, 138, 0.12), transparent 70%);
+    radial-gradient(ellipse 60% 40% at 50% 60%, rgba(246, 208, 138, 0.10), transparent 70%);
 }
 
 @utility verse {
   font-family: var(--font-display);
   font-style: italic;
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   color: #F6D08A;
   padding-left: 1.25rem;
   border-left: 2px solid;
@@ -182,8 +178,6 @@
   opacity: 0;
   transform: translateY(24px);
   transition: opacity 0.9s ease-out, transform 0.9s ease-out;
-}
-@utility reveal {
   &.is-visible {
     opacity: 1;
     transform: translateY(0);
@@ -191,19 +185,19 @@
 }
 
 @keyframes flareGlow {
-  0%, 100% { opacity: 0.5; transform: scaleX(1); }
-  50% { opacity: 0.85; transform: scaleX(1.1); }
+  0%, 100% { opacity: 0.5; transform: translateX(-50%) scaleX(1); }
+  50% { opacity: 0.9; transform: translateX(-50%) scaleX(1.08); }
 }
 
 @utility hero-flare {
   position: absolute;
   left: 50%;
-  bottom: -8%;
+  bottom: -10%;
   transform: translateX(-50%);
-  width: 120%;
-  height: 30%;
-  background: radial-gradient(ellipse 50% 100% at 50% 50%, rgba(246, 208, 138, 0.55), rgba(224, 160, 64, 0.15) 40%, transparent 70%);
-  filter: blur(20px);
+  width: 130%;
+  height: 35%;
+  background: radial-gradient(ellipse 50% 100% at 50% 50%, rgba(246, 208, 138, 0.6), rgba(224, 160, 64, 0.18) 40%, transparent 70%);
+  filter: blur(24px);
   pointer-events: none;
   animation: flareGlow 4s ease-in-out infinite;
 }
