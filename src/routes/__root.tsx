@@ -77,19 +77,28 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Imersão Ruptura — Rapha Tarso | 1 e 2 de Agosto de 2026" },
+      {
+        name: "description",
+        content:
+          "Dois dias presenciais para quebrar os pactos inconscientes que travam a sua prosperidade, paz e liberdade. Imersão Ruptura com Rapha Tarso.",
+      },
+      { property: "og:title", content: "Imersão Ruptura — Rapha Tarso" },
+      {
+        property: "og:description",
+        content:
+          "O fim dos pactos inconscientes que travam a sua prosperidade, a sua paz e a sua liberdade.",
+      },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: appCss,
+        href: "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&family=Montserrat:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap",
       },
     ],
   }),
