@@ -575,13 +575,13 @@ function Index() {
                 day: "Dia 1",
                 title: "Revelação e Confronto",
                 body: "O dia em que o invisível se torna visível. Você vai enxergar os pactos que fez sem saber, mapear as correntes que se repetem e encontrar a raiz — não os sintomas.",
-                verse: ""Conhecereis a verdade, e a verdade vos libertará." — João 8:32",
+                verse: `"Conhecereis a verdade, e a verdade vos libertará." — João 8:32`,
               },
               {
                 day: "Dia 2",
                 title: "Quebra e Nova Identidade",
                 body: "O dia da ruptura. Você quebra o pacto na raiz e dá o primeiro passo para fora do ciclo — para nascer na identidade próspera que estava presa do outro lado da corrente.",
-                verse: ""Se alguém está em Cristo, nova criatura é." — 2 Coríntios 5:17",
+                verse: `"Se alguém está em Cristo, nova criatura é." — 2 Coríntios 5:17`,
               },
             ].map((d) => (
               <article
@@ -1046,7 +1046,7 @@ function Index() {
               },
               {
                 q: "Acho que já passou da minha hora / é tarde demais.",
-                a: "Uma das correntes mais comuns e mais mentirosas. Não existe prazo de validade para uma ruptura. O que parece "tarde demais" costuma ser o medo disfarçado de lógica.",
+                a: `Uma das correntes mais comuns e mais mentirosas. Não existe prazo de validade para uma ruptura. O que parece "tarde demais" costuma ser o medo disfarçado de lógica.`,
               },
               {
                 q: "Preciso ser cristã para participar?",
