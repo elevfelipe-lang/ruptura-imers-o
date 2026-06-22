@@ -83,7 +83,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "Dois dias presenciais para quebrar os pactos inconscientes que travam a sua prosperidade, paz e liberdade. Imersão Ruptura com Rapha Tarso.",
       },
-      { property: "og:title", content: "Imersão Ruptura — Rapha Tarso" },
+      { property: "og:title", content: "Imersão Ruptura — Rapha Tarso | 1 e 2 de Agosto de 2026" },
       {
         property: "og:description",
         content:
@@ -91,6 +91,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Imersão Ruptura — Rapha Tarso | 1 e 2 de Agosto de 2026" },
+      { name: "description", content: "A one-page, mobile-first landing page for the \"Imersão Ruptura\" event, built with React and Tailwind CSS." },
+      { property: "og:description", content: "A one-page, mobile-first landing page for the \"Imersão Ruptura\" event, built with React and Tailwind CSS." },
+      { name: "twitter:description", content: "A one-page, mobile-first landing page for the \"Imersão Ruptura\" event, built with React and Tailwind CSS." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c2567344-e8d4-407e-827b-53703ffa6772/id-preview-276cfc1d--c01160c9-214c-472d-b661-a00c7eac41de.lovable.app-1782163229986.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c2567344-e8d4-407e-827b-53703ffa6772/id-preview-276cfc1d--c01160c9-214c-472d-b661-a00c7eac41de.lovable.app-1782163229986.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
